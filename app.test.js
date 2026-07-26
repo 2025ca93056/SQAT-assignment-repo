@@ -7,11 +7,13 @@ const path = require('path');
 const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 
 beforeEach(() => {
-  // Reset DOM
+  // Reset DOM completely
   document.documentElement.innerHTML = '';
+  
+  // Set HTML content
   document.documentElement.innerHTML = html.toString();
   
-  // Extract script content more reliably using indexOf
+  // Extract script content
   const scriptStart = html.indexOf('<script>');
   const scriptEnd = html.indexOf('</script>');
   
@@ -19,21 +21,27 @@ beforeEach(() => {
     try {
       const scriptCode = html.substring(scriptStart + 8, scriptEnd);
       
-      // Execute in global scope using eval to make all functions globally accessible
-      eval(scriptCode);
+      // Execute in window scope to make functions globally accessible
+      window.eval(scriptCode);
       
-      // Trigger initApp to populate UI elements
-      if (typeof initApp !== 'undefined') {
-        initApp();
+      // Wait for initApp to be defined and call it
+      if (typeof window.initApp === 'function') {
+        window.initApp();
       }
     } catch (e) {
-      console.debug('Script execution error:', e.message);
+      console.debug('Script execution error:', e.message, e.stack);
     }
   }
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
+  // Clean up window functions
+  delete window.policies;
+  delete window.showPage;
+  delete window.initApp;
+  delete window.openApply;
+  delete window.handleFormSubmit;
 });
 
 describe('Insurance Application - UI & Navigation Tests', () => {
