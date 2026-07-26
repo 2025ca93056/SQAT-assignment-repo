@@ -7,6 +7,9 @@ const path = require('path');
 const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 
 beforeEach(() => {
+  // Clear the DOM first
+  document.documentElement.innerHTML = '';
+  
   // Parse the HTML to extract script separately
   const scriptStartIdx = html.indexOf('<script>');
   const scriptEndIdx = html.indexOf('</script>');
@@ -14,12 +17,11 @@ beforeEach(() => {
   const htmlContent = html.substring(0, scriptStartIdx) + html.substring(scriptEndIdx + 9);
   const scriptContent = html.substring(scriptStartIdx + 8, scriptEndIdx);
   
-  // Clear and set the DOM
+  // Set the DOM with full HTML
   document.documentElement.innerHTML = htmlContent;
   
-  // Now evaluate the script in the global context
+  // Execute the script in global scope
   try {
-    // Using Function constructor to execute in global scope
     const fn = new Function(scriptContent);
     fn.call(window);
     
