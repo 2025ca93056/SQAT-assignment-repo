@@ -8,13 +8,18 @@ const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 
 beforeEach(() => {
   document.documentElement.innerHTML = html.toString();
+  
   // Execute inline scripts to bind event listeners and initialize app
   const scripts = document.getElementsByTagName('script');
   for (let i = 0; i < scripts.length; i++) {
     try {
-      eval(scripts[i].innerHTML);
+      // Create a function scope to properly define all functions
+      const scriptContent = scripts[i].innerHTML;
+      // Use Function constructor to ensure global scope for function definitions
+      new Function(scriptContent)();
     } catch (e) {
-      // Prevents empty or external scripts from throwing errors during evaluation
+      // Log but continue - external scripts will fail
+      console.debug('Script execution note:', e.message);
     }
   }
 });
@@ -64,6 +69,7 @@ describe('Insurance Application - Form Validation & Submission Tests', () => {
     
     // Form should not print payload due to browser validation constraints
     expect(consoleSpy).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 
   test('should fail validation when a mobile number does not match the 10-digit pattern', () => {
@@ -101,5 +107,6 @@ describe('Insurance Application - Form Validation & Submission Tests', () => {
     // Form validation check pass expectation
     expect(form.checkValidity()).toBe(true);
     expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 });
