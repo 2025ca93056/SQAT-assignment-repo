@@ -9,12 +9,13 @@ const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 beforeEach(() => {
   document.documentElement.innerHTML = html.toString();
   
-  // Extract and execute the inline script
+  // Extract and execute the inline script - fixed regex to handle script content properly
   const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
   if (scriptMatch) {
     try {
-      // Execute script in global scope
-      new Function(scriptMatch[1])();
+      // Execute script in global scope to make functions available globally
+      const scriptCode = scriptMatch[1];
+      eval(scriptCode);
       // Explicitly call initApp to populate the UI
       if (typeof initApp !== 'undefined') {
         initApp();
