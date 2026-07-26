@@ -38,7 +38,7 @@
         .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .card h3 { font-size: 20px; margin-bottom: 12px; color: #111; }
         .card p { color: var(--gray); font-size: 14px; margin-bottom: 15px; }
-        .btn { display: inline-block; background: var(--primary); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: background 0.3s; }
+        .btn { display: inline-block; background: var(--primary); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
         .btn:hover { background: #004085; }
         .btn-success { background: var(--secondary); }
         .btn-success:hover { background: #1e7e34; }
@@ -202,11 +202,11 @@
     <script>
         // Core JSON Data Models
         const policies = [
-            { id: 'Health', title: 'Health Insurance', desc: 'Comprehensive medical protection tracking hospital stays, critical care setups, and family cashless benefits.', premium: '₹450 / month', maturity: 'Renewable Annually', benefits: 'Cashless treatment, Daycare covers', eligibility: '18 - 65 Years' },
-            { id: 'Life', title: 'Life Insurance', desc: 'Secure reliable maturity savings alongside lifetime dependency support safeguards.', premium: '₹1,200 / month', maturity: '15 - 30 Years', benefits: 'Maturity bonus + Guaranteed payout', eligibility: '18 - 55 Years' },
-            { id: 'Vehicle', title: 'Vehicle Insurance', desc: 'Robust protection guarding personal cars and multi-wheelers against crashes, accidents, and third-party liabilities.', premium: '₹250 / month', maturity: '1 Year (Annual)', benefits: 'Zero depreciation, roadside help', eligibility: 'Valid Driving License Holder' },
-            { id: 'Term', title: 'Term Insurance', desc: 'Pure high-value protection providing large payouts at extremely low premiums for primary earners.', premium: '₹600 / month', maturity: '10 - 40 Years', benefits: 'High coverage sum, Tax exemptions', eligibility: '18 - 60 Years, Regular Income' },
-            { id: 'Child', title: 'Child Plan', desc: 'Targeted long-term growth funds backing milestones like college education or marriage.', premium: '₹1,500 / month', maturity: '10 - 25 Years', benefits: 'Premium waiver, Scheduled payouts', eligibility: 'Parents aged 21 - 50 Years' }
+            { id: 'Health', title: 'Health Insurance', desc: 'Comprehensive medical protection tracking hospital stays, critical care setups, and family cashless benefits.', premium: '₹450 / month', maturity: '1 - 5 Years', benefits: 'Hospital coverage, cashless treatment', eligibility: 'Age 18-65' },
+            { id: 'Life', title: 'Life Insurance', desc: 'Secure reliable maturity savings alongside lifetime dependency support safeguards.', premium: '₹1,200 / month', maturity: '15 - 30 Years', benefits: 'Life cover, maturity benefit', eligibility: 'Age 18-60' },
+            { id: 'Vehicle', title: 'Vehicle Insurance', desc: 'Robust protection guarding personal cars and multi-wheelers against crashes, accidents, and third-party liabilities.', premium: '₹250 / month', maturity: '1 Year', benefits: 'Third-party liability, damage cover', eligibility: 'Vehicle age 0-15 years' },
+            { id: 'Term', title: 'Term Insurance', desc: 'Pure high-value protection providing large payouts at extremely low premiums for primary earners.', premium: '₹600 / month', maturity: '10 - 40 Years', benefits: 'Death benefit, low premium', eligibility: 'Age 18-50' },
+            { id: 'Child', title: 'Child Plan', desc: 'Targeted long-term growth funds backing milestones like college education or marriage.', premium: '₹1,500 / month', maturity: '10 - 25 Years', benefits: 'Education funds, maturity bonus', eligibility: 'Age 0-18' }
         ];
 
         // SPA Navigation Configuration
@@ -274,7 +274,7 @@
                 email: document.getElementById('custEmail').value,
                 selectedPolicy: document.getElementById('policySelect').value,
                 policyTerm: document.getElementById('policyTerm').value,
-                documentUploaded: document.getElementById('docUpload').files[0].name
+                documentUploaded: document.getElementById('docUpload').files[0] ? document.getElementById('docUpload').files[0].name : 'No file'
             };
 
             console.log("=== Premium Insurance Application Data Payload ===");
