@@ -7,21 +7,27 @@ const path = require('path');
 const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 
 beforeEach(() => {
+  // Reset DOM
+  document.documentElement.innerHTML = '';
   document.documentElement.innerHTML = html.toString();
   
-  // Extract and execute the inline script - fixed regex to handle script content properly
-  const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
-  if (scriptMatch) {
+  // Extract script content more reliably using indexOf
+  const scriptStart = html.indexOf('<script>');
+  const scriptEnd = html.indexOf('</script>');
+  
+  if (scriptStart !== -1 && scriptEnd !== -1) {
     try {
-      // Execute script in global scope to make functions available globally
-      const scriptCode = scriptMatch[1];
+      const scriptCode = html.substring(scriptStart + 8, scriptEnd);
+      
+      // Execute in global scope using eval to make all functions globally accessible
       eval(scriptCode);
-      // Explicitly call initApp to populate the UI
+      
+      // Trigger initApp to populate UI elements
       if (typeof initApp !== 'undefined') {
         initApp();
       }
     } catch (e) {
-      console.debug('Script error:', e.message);
+      console.debug('Script execution error:', e.message);
     }
   }
 });
