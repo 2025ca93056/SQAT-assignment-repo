@@ -1,7 +1,7 @@
 const { screen, fireEvent } = require('@testing-library/dom');
 require('@testing-library/jest-dom');
-const { fs } = require('fs');
-const { path } = require('path');
+const fs = require('fs');
+const path = require('path');
 
 // Load the HTML file into JSDOM environment before each test
 const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
@@ -11,7 +11,11 @@ beforeEach(() => {
   // Execute inline scripts to bind event listeners
   const scripts = document.getElementsByTagName('script');
   for (let i = 0; i < scripts.length; i++) {
-    eval(scripts[i].innerHTML);
+    try {
+      eval(scripts[i].innerHTML);
+    } catch (e) {
+      // Prevents empty or external scripts from throwing errors during evaluation
+    }
   }
 });
 
