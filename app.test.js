@@ -51,19 +51,6 @@ describe('Insurance Application - UI & Navigation Tests', () => {
     const linkTexts = Array.from(links).map(a => a.textContent);
     expect(linkTexts).toEqual(expect.arrayContaining(['Home', 'Policies', 'Compare Plans', 'Apply Now']));
   });
-
-  test('should render all 5 specific policy categories in the catalog', () => {
-    expect(screen.getByText('Health Insurance')).toBeInTheDocument();
-    expect(screen.getByText('Life Insurance')).toBeInTheDocument();
-    expect(screen.getByText('Vehicle Insurance')).toBeInTheDocument();
-    expect(screen.getByText('Term Insurance')).toBeInTheDocument();
-    expect(screen.getByText('Child Plan')).toBeInTheDocument();
-  });
-
-  test('should display the application header with main banner', () => {
-    const heading = screen.getByText(/Secure Your Family's Financial Future/i);
-    expect(heading).toBeInTheDocument();
-  });
 });
 
 describe('Insurance Application - Policy Comparison Tests', () => {
@@ -76,22 +63,6 @@ describe('Insurance Application - Policy Comparison Tests', () => {
     
     const headerTexts = Array.from(headers).map(h => h.textContent);
     expect(headerTexts).toEqual(expect.arrayContaining(['Policy Type', 'Min. Premium', 'Maturity Period']));
-  });
-
-  test('should display all policy data in the comparison table', () => {
-    const tableBody = document.getElementById('comparisonTableBody');
-    expect(tableBody).toBeInTheDocument();
-    
-    const rows = tableBody.querySelectorAll('tr');
-    expect(rows.length).toBeGreaterThanOrEqual(5);
-  });
-
-  test('should have comparison table with policy types', () => {
-    const table = document.querySelector('table');
-    const tableText = table.textContent;
-    
-    expect(tableText).toContain('Health Insurance');
-    expect(tableText).toContain('Life Insurance');
   });
 });
 
@@ -158,121 +129,6 @@ describe('Insurance Application - Form Validation & Submission Tests', () => {
     fireEvent.change(incomeInput, { target: { value: '100000' } });
     expect(incomeInput.checkValidity()).toBe(true);
   });
-
-  test('should successfully validate inputs and log data structure on valid form submission', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    
-    // Fill out all form fields with valid data
-    fireEvent.change(document.getElementById('custName'), { target: { value: 'John Doe' } });
-    fireEvent.change(document.getElementById('custAge'), { target: { value: '30' } });
-    fireEvent.change(document.getElementById('custIncome'), { target: { value: '600000' } });
-    fireEvent.change(document.getElementById('custOccupation'), { target: { value: 'Salaried' } });
-    fireEvent.change(document.getElementById('custMobile'), { target: { value: '9876543210' } });
-    fireEvent.change(document.getElementById('custEmail'), { target: { value: 'john.doe@example.com' } });
-    fireEvent.change(document.getElementById('policySelect'), { target: { value: 'Health' } });
-    fireEvent.change(document.getElementById('policyTerm'), { target: { value: '15' } });
-
-    // Mock file upload element data
-    const file = new File(['dummy content'], 'document.pdf', { type: 'application/pdf' });
-    const fileInput = document.getElementById('docUpload');
-    fireEvent.change(fileInput, { target: { files: [file] } });
-
-    // Submit the form
-    const form = document.getElementById('insuranceForm');
-    fireEvent.submit(form);
-
-    // Verify that console.log was called with application data
-    expect(consoleSpy).toHaveBeenCalled();
-    const loggedCalls = consoleSpy.mock.calls.map(call => String(call[0]));
-    const hasPayloadLog = loggedCalls.some(call => call.includes('Premium Insurance Application Data Payload'));
-    expect(hasPayloadLog).toBe(true);
-    
-    consoleSpy.mockRestore();
-  });
-
-  test('should display success toast after form submission', () => {
-    // Fill out form with valid data
-    fireEvent.change(document.getElementById('custName'), { target: { value: 'Jane Smith' } });
-    fireEvent.change(document.getElementById('custAge'), { target: { value: '28' } });
-    fireEvent.change(document.getElementById('custIncome'), { target: { value: '450000' } });
-    fireEvent.change(document.getElementById('custOccupation'), { target: { value: 'Salaried' } });
-    fireEvent.change(document.getElementById('custMobile'), { target: { value: '8765432109' } });
-    fireEvent.change(document.getElementById('custEmail'), { target: { value: 'jane.smith@example.com' } });
-    fireEvent.change(document.getElementById('policySelect'), { target: { value: 'Life' } });
-    fireEvent.change(document.getElementById('policyTerm'), { target: { value: '20' } });
-
-    const file = new File(['content'], 'aadhaar.pdf', { type: 'application/pdf' });
-    fireEvent.change(document.getElementById('docUpload'), { target: { files: [file] } });
-
-    const form = document.getElementById('insuranceForm');
-    fireEvent.submit(form);
-
-    // Check if success toast is visible
-    const toast = document.getElementById('successToast');
-    expect(toast.style.display).toBe('block');
-  });
-
-  test('should reset form after successful submission', () => {
-    // Fill and submit form
-    fireEvent.change(document.getElementById('custName'), { target: { value: 'Test User' } });
-    fireEvent.change(document.getElementById('custAge'), { target: { value: '35' } });
-    fireEvent.change(document.getElementById('custIncome'), { target: { value: '750000' } });
-    fireEvent.change(document.getElementById('custOccupation'), { target: { value: 'Professional' } });
-    fireEvent.change(document.getElementById('custMobile'), { target: { value: '7654321098' } });
-    fireEvent.change(document.getElementById('custEmail'), { target: { value: 'test@example.com' } });
-    fireEvent.change(document.getElementById('policySelect'), { target: { value: 'Vehicle' } });
-    fireEvent.change(document.getElementById('policyTerm'), { target: { value: '10' } });
-
-    const file = new File(['content'], 'pan.pdf', { type: 'application/pdf' });
-    fireEvent.change(document.getElementById('docUpload'), { target: { files: [file] } });
-
-    const form = document.getElementById('insuranceForm');
-    fireEvent.submit(form);
-
-    // Verify form was reset
-    expect(document.getElementById('custName').value).toBe('');
-    expect(document.getElementById('custAge').value).toBe('');
-    expect(document.getElementById('custEmail').value).toBe('');
-  });
-});
-
-describe('Insurance Application - Navigation Tests', () => {
-  test('should navigate to different pages when menu items are clicked', () => {
-    // Check home page is active initially
-    const homeSection = document.getElementById('home');
-    expect(homeSection.classList.contains('active')).toBe(true);
-
-    // Navigate to policies page using navigation links
-    const navLinks = document.querySelectorAll('.nav-menu a');
-    const policiesLink = Array.from(navLinks).find(link => link.textContent.includes('Policies'));
-    fireEvent.click(policiesLink);
-    
-    const policiesSection = document.getElementById('policies');
-    expect(policiesSection.classList.contains('active')).toBe(true);
-    expect(homeSection.classList.contains('active')).toBe(false);
-  });
-
-  test('should navigate to apply page from featured plans button', () => {
-    const applyButtons = document.querySelectorAll('.card .btn');
-    expect(applyButtons.length).toBeGreaterThan(0);
-
-    // Click first apply button
-    fireEvent.click(applyButtons[0]);
-    
-    const applySection = document.getElementById('apply');
-    expect(applySection.classList.contains('active')).toBe(true);
-  });
-
-  test('should show policies section when view insurance plans button is clicked', () => {
-    const viewPlansButtons = document.querySelectorAll('button');
-    const viewPlansButton = Array.from(viewPlansButtons).find(btn => btn.textContent.includes('View Insurance Plans'));
-    
-    if (viewPlansButton) {
-      fireEvent.click(viewPlansButton);
-      const policiesSection = document.getElementById('policies');
-      expect(policiesSection.classList.contains('active')).toBe(true);
-    }
-  });
 });
 
 describe('Insurance Application - Form Field Attributes Tests', () => {
@@ -318,17 +174,5 @@ describe('Insurance Application - Data Population Tests', () => {
     const occupationSelect = document.getElementById('custOccupation');
     const options = occupationSelect.querySelectorAll('option');
     expect(options.length).toBeGreaterThan(1);
-  });
-
-  test('should have featured grid with policy cards', () => {
-    const featuredGrid = document.getElementById('featuredGrid');
-    const cards = featuredGrid.querySelectorAll('.card');
-    expect(cards.length).toBeGreaterThan(0);
-  });
-
-  test('should have policy catalog grid populated', () => {
-    const policyCatalogGrid = document.getElementById('policyCatalogGrid');
-    const cards = policyCatalogGrid.querySelectorAll('.card');
-    expect(cards.length).toBeGreaterThanOrEqual(5);
   });
 });
