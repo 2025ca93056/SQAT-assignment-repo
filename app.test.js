@@ -3,26 +3,31 @@ require('@testing-library/jest-dom');
 const fs = require('fs');
 const path = require('path');
 
-// Load the HTML file into JSDOM environment before each test
 const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 
 beforeEach(() => {
-  // Clear the DOM first
+  // Clear the DOM
   document.documentElement.innerHTML = '';
   
-  // Set the full HTML content (including script tag)
+  // Set the full HTML content
   document.documentElement.innerHTML = html;
   
-  // Re-extract and execute script after DOM is loaded
+  // Extract script content and execute it in global context
   const scriptTags = document.querySelectorAll('script');
   scriptTags.forEach(tag => {
     try {
-      // Execute each script in the global window context
-      eval(tag.textContent);
+      // Create a new function to properly scope the script execution
+      const scriptFunction = new Function(tag.textContent);
+      scriptFunction();
     } catch (e) {
       console.error('Script error:', e.message);
     }
   });
+  
+  // Manually trigger initApp after a small delay to ensure DOM is ready
+  if (window.initApp) {
+    window.initApp();
+  }
 });
 
 afterEach(() => {
