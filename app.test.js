@@ -15,6 +15,10 @@ beforeEach(() => {
     try {
       // Execute script in global scope
       new Function(scriptMatch[1])();
+      // Explicitly call initApp to populate the UI
+      if (typeof initApp !== 'undefined') {
+        initApp();
+      }
     } catch (e) {
       console.debug('Script error:', e.message);
     }
