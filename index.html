@@ -1,1 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SureTrust Insurance</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #28a745;
+            --dark: #333;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border: #ddd;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #fafafa; color: var(--dark); line-height: 1.6; padding-bottom: 60px; }
+        
+        /* Navigation styling */
+        header { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 15px 20px; }
+        .logo { font-size: 24px; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .nav-menu { display: flex; list-style: none; gap: 20px; }
+        .nav-menu a { text-decoration: none; color: var(--dark); font-weight: 500; transition: color 0.3s; }
+        .nav-menu a:hover { color: var(--primary); }
+        .menu-toggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; }
 
+        /* Container layouts */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        section { display: none; margin-bottom: 40px; }
+        section.active { display: block; }
+        
+        h2 { font-size: 28px; margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        /* Grid system for plans */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 20px; }
+        .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 25px; transition: transform 0.3s, box-shadow: 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .card h3 { font-size: 20px; margin-bottom: 12px; color: #111; }
+        .card p { color: var(--gray); font-size: 14px; margin-bottom: 15px; }
+        .btn { display: inline-block; background: var(--primary); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: background 0.3s; }
+        .btn:hover { background: #004085; }
+        .btn-success { background: var(--secondary); }
+        .btn-success:hover { background: #1e7e34; }
+
+        /* Comparison Table styles */
+        .table-responsive { overflow-x: auto; background: #fff; border: 1px solid var(--border); border-radius: 8px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 15px 20px; border-bottom: 1px solid var(--border); }
+        th { background: var(--light); color: var(--dark); font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+        
+        /* Form fields */
+        .form-container { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 30px; max-width: 700px; margin: 0 auto; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 14px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 5px; font-size: 15px; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,86,179,0.1); }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        /* Success alert toast */
+        .toast { display: none; background: #d4edda; color: #155724; padding: 15px 20px; border-radius: 5px; border: 1px solid #c3e6cb; margin-bottom: 20px; text-align: center; }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .nav-menu { display: none; flex-direction: column; width: 100%; position: absolute; top: 100%; left: 0; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 20px; gap: 15px; }
+            .nav-menu.open { display: flex; }
+            .menu-toggle { display: block; }
+            .row-2 { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showPage('home')">🛡️ SureTrust</a>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#" onclick="showPage('home')">Home</a></li>
+                <li><a href="#" onclick="showPage('policies')">Policies</a></li>
+                <li><a href="#" onclick="showPage('compare')">Compare Plans</a></li>
+                <li><a href="#" onclick="showPage('apply')">Apply Now</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Success message placeholder -->
+        <div class="toast" id="successToast">Application submitted successfully! Our representative will call you shortly.</div>
+
+        <!-- HOME PAGE -->
+        <section id="home" class="active">
+            <div style="background: linear-gradient(135deg, #0056b3, #003366); color: white; padding: 50px 30px; border-radius: 12px; margin-bottom: 40px; text-align: center;">
+                <h1 style="font-size: 36px; margin-bottom: 15px;">Secure Your Family's Financial Future</h1>
+                <p style="font-size: 18px; opacity: 0.9; margin-bottom: 25px;">Explore flexible, feature-packed responsive plans tailored to your direct lifestyle milestones.</p>
+                <button class="btn btn-success" style="font-size: 16px; padding: 12px 25px;" onclick="showPage('policies')">View Insurance Plans</button>
+            </div>
+            
+            <h2>Featured Insurance Plans</h2>
+            <div class="grid" id="featuredGrid"></div>
+        </section>
+
+        <!-- POLICY LIST PAGE -->
+        <section id="policies">
+            <h2>Our Insurance Policies</h2>
+            <div class="grid" id="policyCatalogGrid"></div>
+        </section>
+
+        <!-- COMPARISON PAGE -->
+        <section id="compare">
+            <h2>Policy Comparison Matrix</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Policy Type</th>
+                            <th>Min. Premium</th>
+                            <th>Maturity Period</th>
+                            <th>Key Benefits</th>
+                            <th>Eligibility Criteria</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- APPLICATION FORM PAGE -->
+        <section id="apply">
+            <h2>Insurance Application Form</h2>
+            <div class="form-container">
+                <form id="insuranceForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <label for="custName">Customer Full Name *</label>
+                        <input type="text" id="custName" class="form-control" required placeholder="John Doe">
+                    </div>
+                    
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label for="custAge">Age *</label>
+                            <input type="number" id="custAge" class="form-control" required min="18" max="65" placeholder="Min 18 yrs">
+                        </div>
+                        <div class="form-group">
+                            <label for="custIncome">Annual Income (₹) *</label>
+                            <input type="number" id="custIncome" class="form-control" required min="100000" placeholder="e.g. 500000">
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label for="custOccupation">Occupation *</label>
+                            <select id="custOccupation" class="form-control" required>
+                                <option value="">Select Occupation</option>
+                                <option value="Salaried">Salaried Employee</option>
+                                <option value="Self-Employed">Self-Employed / Business</option>
+                                <option value="Professional">Doctor / Engineer / Lawyer</option>
+                                <option value="Student">Student</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="policySelect">Select Insurance Policy *</label>
+                            <select id="policySelect" class="form-control" required>
+                                <option value="">Choose a plan</option>
+                                <option value="Health">Health Insurance</option>
+                                <option value="Life">Life Insurance</option>
+                                <option value="Vehicle">Vehicle Insurance</option>
+                                <option value="Term">Term Insurance</option>
+                                <option value="Child">Child Plan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label for="custMobile">Mobile Number *</label>
+                            <input type="tel" id="custMobile" class="form-control" required pattern="[6-9][0-9]{9}" placeholder="10-digit mobile number">
+                        </div>
+                        <div class="form-group">
+                            <label for="custEmail">Email Address *</label>
+                            <input type="email" id="custEmail" class="form-control" required placeholder="name@example.com">
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label for="policyTerm">Policy Term (Years) *</label>
+                            <input type="number" id="policyTerm" class="form-control" required min="5" max="40" placeholder="5 to 40 years">
+                        </div>
+                        <div class="form-group">
+                            <label for="docUpload">Upload Aadhaar / PAN Card (PDF/Image) *</label>
+                            <input type="file" id="docUpload" class="form-control" required accept="image/*,.pdf">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success" style="width: 100%; font-size: 16px; padding: 14px;">Submit Application</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Core JSON Data Models
+        const policies = [
+            { id: 'Health', title: 'Health Insurance', desc: 'Comprehensive medical protection tracking hospital stays, critical care setups, and family cashless benefits.', premium: '₹450 / month', maturity: 'Renewable Annually', benefits: 'Cashless treatment, Daycare covers', eligibility: '18 - 65 Years' },
+            { id: 'Life', title: 'Life Insurance', desc: 'Secure reliable maturity savings alongside lifetime dependency support safeguards.', premium: '₹1,200 / month', maturity: '15 - 30 Years', benefits: 'Maturity bonus + Guaranteed payout', eligibility: '18 - 55 Years' },
+            { id: 'Vehicle', title: 'Vehicle Insurance', desc: 'Robust protection guarding personal cars and multi-wheelers against crashes, accidents, and third-party liabilities.', premium: '₹250 / month', maturity: '1 Year (Annual)', benefits: 'Zero depreciation, roadside help', eligibility: 'Valid Driving License Holder' },
+            { id: 'Term', title: 'Term Insurance', desc: 'Pure high-value protection providing large payouts at extremely low premiums for primary earners.', premium: '₹600 / month', maturity: '10 - 40 Years', benefits: 'High coverage sum, Tax exemptions', eligibility: '18 - 60 Years, Regular Income' },
+            { id: 'Child', title: 'Child Plan', desc: 'Targeted long-term growth funds backing milestones like college education or marriage.', premium: '₹1,500 / month', maturity: '10 - 25 Years', benefits: 'Premium waiver, Scheduled payouts', eligibility: 'Parents aged 21 - 50 Years' }
+        ];
+
+        // SPA Navigation Configuration
+        function showPage(pageId) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById('navMenu').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize UI Elements via JS
+        function initApp() {
+            const featuredGrid = document.getElementById('featuredGrid');
+            const policyCatalogGrid = document.getElementById('policyCatalogGrid');
+            const tableBody = document.getElementById('comparisonTableBody');
+
+            // Render Featured Home Cards (First 3 items)
+            policies.slice(0, 3).forEach(p => {
+                featuredGrid.innerHTML += `
+                    <div class="card">
+                        <h3>${p.title}</h3>
+                        <p>${p.desc}</p>
+                        <button class="btn" onclick="openApply('${p.id}')">Apply Now</button>
+                    </div>`;
+            });
+
+            // Render Full Policy Grid
+            policies.forEach(p => {
+                policyCatalogGrid.innerHTML += `
+                    <div class="card">
+                        <h3>${p.title}</h3>
+                        <p>${p.desc}</p>
+                        <div style="margin-bottom:15px; font-weight:600; color:var(--primary);">Prem: ${p.premium}</div>
+                        <button class="btn" onclick="openApply('${p.id}')">Apply Now</button>
+                    </div>`;
+                
+                // Populate Comparison Rows
+                tableBody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:600;">${p.title}</td>
+                        <td>${p.premium}</td>
+                        <td>${p.maturity}</td>
+                        <td>${p.benefits}</td>
+                        <td>${p.eligibility}</td>
+                    </tr>`;
+            });
+        }
+
+        function openApply(policyId) {
+            showPage('apply');
+            document.getElementById('policySelect').value = policyId;
+        }
+
+        // Form Submission Interception & Formatted Logging
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            // Console structural layout payload
+            const applicationData = {
+                customerName: document.getElementById('custName').value,
+                age: document.getElementById('custAge').value,
+                annualIncome: document.getElementById('custIncome').value,
+                occupation: document.getElementById('custOccupation').value,
+                mobile: document.getElementById('custMobile').value,
+                email: document.getElementById('custEmail').value,
+                selectedPolicy: document.getElementById('policySelect').value,
+                policyTerm: document.getElementById('policyTerm').value,
+                documentUploaded: document.getElementById('docUpload').files[0].name
+            };
+
+            console.log("=== Premium Insurance Application Data Payload ===");
+            console.log(JSON.stringify(applicationData, null, 2));
+
+            // Notify Action User Confirmation
+            const toast = document.getElementById('successToast');
+            toast.style.display = 'block';
+            document.getElementById('insuranceForm').reset();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 6000);
+        }
+
+        // Mobile responsiveness menu interaction
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('navMenu').classList.toggle('open');
+        });
+
+        // Bootstrap App Content Execution
+        window.onload = initApp;
+    </script>
+</body>
+</html>
