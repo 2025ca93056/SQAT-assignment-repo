@@ -1,7 +1,7 @@
-import { screen, fireEvent } from '@testing-library/dom';
-import '@testing-library/jest-dom';
-import fs from 'fs';
-import path from 'path';
+const { screen, fireEvent } = require('@testing-library/dom');
+require('@testing-library/jest-dom');
+const { fs } = require('fs');
+const { path } = require('path');
 
 // Load the HTML file into JSDOM environment before each test
 const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
