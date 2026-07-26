@@ -8,7 +8,7 @@ const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 
 beforeEach(() => {
   document.documentElement.innerHTML = html.toString();
-  // Execute inline scripts to bind event listeners
+  // Execute inline scripts to bind event listeners and initialize app
   const scripts = document.getElementsByTagName('script');
   for (let i = 0; i < scripts.length; i++) {
     try {
@@ -25,7 +25,7 @@ afterEach(() => {
 
 describe('Insurance Application - UI & Navigation Tests', () => {
   test('should render the company logo and navigation elements', () => {
-    const logo = screen.getByText(/ShieldSure Insurance/i);
+    const logo = screen.getByText(/SureTrust/i);
     expect(logo).toBeInTheDocument();
     
     expect(screen.getByRole('link', { name: /Home/i })).toBeInTheDocument();
@@ -45,19 +45,19 @@ describe('Insurance Application - UI & Navigation Tests', () => {
 
 describe('Insurance Application - Policy Comparison Tests', () => {
   test('should verify the comparison table contains critical metric headers', () => {
-    const table = screen.getByRole('table');
+    const table = document.querySelector('table');
     expect(table).toBeInTheDocument();
-    expect(screen.getByText('Plan Name')).toBeInTheDocument();
-    expect(screen.getByText('Premium')).toBeInTheDocument();
+    expect(screen.getByText('Policy Type')).toBeInTheDocument();
+    expect(screen.getByText('Min. Premium')).toBeInTheDocument();
     expect(screen.getByText('Maturity Period')).toBeInTheDocument();
-    expect(screen.getByText('Eligibility')).toBeInTheDocument();
+    expect(screen.getByText('Eligibility Criteria')).toBeInTheDocument();
   });
 });
 
 describe('Insurance Application - Form Validation & Submission Tests', () => {
   test('should block submission and trigger native validation if required fields are missing', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    const form = screen.getByRole('form') || document.querySelector('form');
+    const form = document.querySelector('form');
     
     // Attempt submission with empty fields
     fireEvent.submit(form);
@@ -80,18 +80,18 @@ describe('Insurance Application - Form Validation & Submission Tests', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     
     // Fill out all form attributes accurately
-    fireEvent.change(screen.getByLabelText(/Customer Name/i), { target: { value: 'John Doe' } });
+    fireEvent.change(screen.getByLabelText(/Customer Full Name/i), { target: { value: 'John Doe' } });
     fireEvent.change(screen.getByLabelText(/Age/i), { target: { value: '30' } });
     fireEvent.change(screen.getByLabelText(/Annual Income/i), { target: { value: '600000' } });
-    fireEvent.change(screen.getByLabelText(/Occupation/i), { target: { value: 'Software Engineer' } });
+    fireEvent.change(screen.getByLabelText(/Occupation/i), { target: { value: 'Salaried' } });
     fireEvent.change(screen.getByLabelText(/Mobile Number/i), { target: { value: '9876543210' } });
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'john.doe@example.com' } });
-    fireEvent.change(screen.getByLabelText(/Select Policy/i), { target: { value: 'Health Insurance' } });
-    fireEvent.change(screen.getByLabelText(/Policy Term/i), { target: { value: '15 Years' } });
+    fireEvent.change(screen.getByLabelText(/Email Address/i), { target: { value: 'john.doe@example.com' } });
+    fireEvent.change(screen.getByLabelText(/Select Insurance Policy/i), { target: { value: 'Health' } });
+    fireEvent.change(screen.getByLabelText(/Policy Term/i), { target: { value: '15' } });
 
     // Mock file upload element data
     const file = new File(['dummy content'], 'document.pdf', { type: 'application/pdf' });
-    const fileInput = screen.getByLabelText(/Upload Aadhaar\/PAN/i);
+    const fileInput = screen.getByLabelText(/Upload Aadhaar/i);
     fireEvent.change(fileInput, { target: { files: [file] } });
 
     // Submit form payload safely
